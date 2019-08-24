@@ -39,8 +39,7 @@ CommunicationHandler communicationHandler;
 
 QueueHandle_t queue;
 // Need to be initialized in main, otherwise doesn't work in subclasses
-//USART debug(USART::eUSART1, 9600);
-USART debugGNSS(USART::eUSART3, 9600);
+USART debug(USART::eUSART1, 9600);
 
 void init() {
 	SystemCoreClockUpdate();
@@ -77,8 +76,7 @@ void static taskSensors(void *pvParameter) {
 	sensorsHandler.initialize();
 
 	while(1) {
-		//sensorsHandler.run();
-
+		sensorsHandler.run();
 		vTaskDelay(TASK_SENSORS_DELAY);
 	}
 }
@@ -95,7 +93,6 @@ void static taskAlarm(void *pvParameter) {
 void blinkled(void *pvParameter) {
 	int qPointer;
 	while(1) {
-		debugGNSS.send("HELLO", 5);
 		xQueueReceive(queue, &qPointer, 0);
 		if(qPointer == 1) {
 			gpio.setPin(GPIO::PIN_PA0, GPIO::PIN_HIGH);
@@ -123,13 +120,10 @@ int main(void)
 	xStreamBuffer = xStreamBufferCreate(sbSTREAM_BUFFER_LENGTH_BYTES, sbTRIGGER_LEVEL_1 );
 
 	init();
-	//debug.enable();
-	debugGNSS.enable();
-	//debug.enableIRQ();
-	debugGNSS.enableIRQ();
-	debugGNSS.send("Starting system\n", 16);
+	debug.enable();
+	debug.enableIRQ();
 
-	//debug.send("Starting system\n", 16);
+	debug.send("Starting system\n", 16);
 	// Very high priority
 	xTaskCreate(taskAlarm, (const char*)"AlarmTask", configMINIMAL_STACK_SIZE, NULL, alarm_TASK_PRIORITY, NULL);
 	// High priority, Configure as sending task

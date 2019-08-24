@@ -20,6 +20,8 @@ public:
 	virtual ~GNSSHandler();
 	void read();
 	void configure();
+private:
+	void parseMessage();
 };
 
 #endif /* GNSSHANDLER_H_ */
