@@ -2,7 +2,6 @@
  *  
  */
 
-#include "Arduino.h"
 #include "ArrayManagement.h"
 #include "defines.h"
 

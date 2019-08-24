@@ -28,7 +28,9 @@ public:
 private:
 	// Checks if full message received, if yes parse message correctly and set gnss message flag high
 	void parseMessage();
-
+	// Set static buffer, limited amount of memory. Dynamic could exceed heap.
+	static char localBuffer[100];
+	int localBufPointer;
 };
 
 #endif /* GNSSHANDLER_H_ */
