@@ -127,6 +127,7 @@ int main(void)
 	debugGNSS.enable();
 	//debug.enableIRQ();
 	debugGNSS.enableIRQ();
+	debugGNSS.send("Starting system\n", 16);
 
 	//debug.send("Starting system\n", 16);
 	// Very high priority

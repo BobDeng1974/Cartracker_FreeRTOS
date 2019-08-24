@@ -1,5 +1,6 @@
 #include "USART.h"
 #include "defines.h"
+#include "../../RTOS_TEST/inc/delay.h"
 
 GPIO_InitTypeDef GPIO_InitStructureUSART;
 USART_InitTypeDef USART_InitStructure;
@@ -106,6 +107,29 @@ USART::USART(enumUSART eUSART, uint32_t baudrate) {
 		USART_Init(USART2, &USART_InitStructure);
 		break;
 	case eUSART3:
+		// Enable peripheral clocs for USAR3 on GPIOA
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+		RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+		/* Configure PB10 and PB11 as USART3 TX/RX */
+		GPIO_InitStructureUSART.GPIO_Pin = GPIO_Pin_10;	// PB10, Pin 10 TX,
+		GPIO_InitStructureUSART.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_InitStructureUSART.GPIO_Mode = GPIO_Mode_AF_PP;
+		GPIO_Init(GPIOB, &GPIO_InitStructureUSART);
+		// PA10 floating input
+		GPIO_InitStructureUSART.GPIO_Pin = GPIO_Pin_11; // PB11, Pin 11 RX
+		GPIO_InitStructureUSART.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+		GPIO_Init(GPIOB, &GPIO_InitStructureUSART);
+
+		// Configure and initialize usart
+		USART_InitStructure.USART_BaudRate = baudrate;
+		USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+		USART_InitStructure.USART_StopBits = USART_StopBits_1;
+		USART_InitStructure.USART_Parity = USART_Parity_No;
+		USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+		USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+		USART_Init(USART3, &USART_InitStructure);
 		break;
 	}
 }
@@ -119,6 +143,7 @@ void USART::enable() {
 		USART_Cmd(USART2, ENABLE);
 		break;
 	case eUSART3:
+		USART_Cmd(USART3, ENABLE);
 		break;
 	}
 }
@@ -163,6 +188,7 @@ void USART::disable() {
 			USART_Cmd(USART2, DISABLE);
 			break;
 		case eUSART3:
+			USART_Cmd(USART3, DISABLE);
 			break;
 	};
 }
@@ -187,7 +213,7 @@ void USART::send(const char *input, const int len) {
 	case eUSART3:
 		if(busy()) return;
 		for(poll = 0; poll < len; poll++) {
-			USART_SendData(USART2, input[poll]);
+			USART_SendData(USART3, input[poll]);
 			while(busy() == TRUE);
 		}
 		break;
@@ -354,6 +380,7 @@ void USART::resetBuffer() {
 		bPoll3 = 0;
 		break;
 	};
+
 }
 
 bool USART::busy() {
