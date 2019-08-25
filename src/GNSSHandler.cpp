@@ -90,12 +90,12 @@ void GNSSHandler::data_extractor() {
 
 	// Time
 	check = 0;
-	for (int i=1+GPRMC_POS[0]; i<=GPRMC_POS[1]-1; i++) {
+	for (int i= 1 + GPRMC_POS[0]; i <= GPRMC_POS[1] - 1; i++) {
 		timeg[check++]=GPRMC[i];
 	};
 
 	check = 0;
-	for (int i=(1+GPRMC_POS[8]); i<=(GPRMC_POS[9]-1); i++) {
+	for (int i = (1 + GPRMC_POS[8]); i <= (GPRMC_POS[9] - 1); i++) {
 		dateg[check++]=GPRMC[i];
 	};
 
@@ -137,7 +137,7 @@ void GNSSHandler::data_extractor() {
 void GNSSHandler::data_positions()
 {
     if(gps_test == 1){
-    	pc.printf("\n\rGPS test: data positions");
+    	debug_gnss.printf("\n\rGPS test: data positions");
     	gps_fail[1] = 0;
     }
     // GPGGA
@@ -186,7 +186,7 @@ void GNSSHandler::getline()
 
 void GNSSHandler::process()
 {
-    receife_data();
+    receive_data();
     data_positions();
     data_extractor();
     float_conversion();
@@ -226,9 +226,8 @@ void  GNSSHandler::receive_data()
                x = 1;
                test = 1;
                choose = 2;
-               //for(int i=0; i<=69; i++) {  pc.putc(GPGGA[i]); } // print out GPGSA
                if(test==1) {
-            	   pc.printf("\r\n");
+            	   debug_gnss.printf("\r\n");
                }
                break;
              }
@@ -259,7 +258,7 @@ void  GNSSHandler::receive_data()
                  x = 0;
                  test = 1;
                  if(test == 1) {
-                	 pc.printf("\r\n");
+                	 debug_gnss.printf("\r\n");
                  }
                  break;
               }
@@ -291,7 +290,7 @@ void  GNSSHandler::receive_data()
                  x = 0;
                  test = 1;
                  if(test == 1) {
-                	 pc.printf("\r\n");
+                	 debug_gnss.printf("\r\n");
                  }
                  break;
              }
@@ -334,20 +333,20 @@ void  GNSSHandler::receive_data()
  void GNSSHandler::time()
  {
 	 for(int i = 1; i <= ((GPRMC_POS[1] - GPRMC_POS[0]) - 1); i++) {
-		 pc.printf("%c", timeg[i]);
+		 debug_gnss.printf("%c", timeg[i]);
 		 if( i==2 || i==4 ) {
-			 pc.printf(":");
+			 debug_gnss.printf(":");
 		 }
 	 }
  }
 
  void GNSSHandler::date()
  {
-    pc.printf("\n\rDate: ");
+    debug_gnss.printf("\n\rDate: ");
     for(int i = 1; i <= ((GPRMC_POS[9] - GPRMC_POS[8]) - 1); i++) {
-    	pc.printf("%c", dateg[i]);
+    	debug_gnss.printf("%c", dateg[i]);
     	if( i==2 || i==4 ) {
-    		pc.printf(".");
+    		debug_gnss.printf(".");
     	}
     }
 
@@ -357,108 +356,108 @@ void  GNSSHandler::receive_data()
  {
  // Latitude
 	 for(int i = 1; i <= ((GPRMC_POS[3] - GPRMC_POS[2]) - 1); i++) {
-		 pc.printf("%c", Latitude[i]);
+		 debug_gnss.printf("%c", Latitude[i]);
 	 }
      for(int i = 1; i <= ((GPRMC_POS[4] - GPRMC_POS[3]) - 1); i++) {
-    	 pc.printf("%c", Latitude_direction[i]);
+    	 debug_gnss.printf("%c", Latitude_direction[i]);
      }
 
     // Longitude
     for(int i = 1; i <= ((GPRMC_POS[5] - GPRMC_POS[4]) - 1); i++) {
-    	pc.printf("%c", Longitude[i]);
+    	debug_gnss.printf("%c", Longitude[i]);
     }
-    pc.printf(" : ");
+    debug_gnss.printf(" : ");
     for(int i = 1; i <= ((GPRMC_POS[6] - GPRMC_POS[5]) - 1); i++) {
-    	pc.printf("%c", Longitude_direction[i]);
+    	debug_gnss.printf("%c", Longitude_direction[i]);
     }
 
     // Altitude
-    pc.printf("\n\r");
-    pc.printf("Altitude : ");
+    debug_gnss.printf("\n\r");
+    debug_gnss.printf("Altitude : ");
     for(int i = 1; i <= ((GPGGA_POS[9] - GPGGA_POS[8]) - 1); i++) {
-    	pc.printf("%c", Altitude[i]);
+    	debug_gnss.printf("%c", Altitude[i]);
     }
  }
 
  void GNSSHandler::satellites()
  {
 	 for(int i = 1; i <= ((GPGSV_POS[3] - GPGSV_POS[2]) - 1); i++) {
-		 pc.printf("%c", Satellites[i]);
+		 debug_gnss.printf("%c", Satellites[i]);
 	 }
  }
  void GNSSHandler::printdata()
  {
-    pc.printf("Raw data:\n\r");
+    debug_gnss.printf("Raw data:\n\r");
     for(int i = 0; i <= 69; i++) {
-    	pc.putc(GPGGA[i]);
+    	debug_gnss.putc(GPGGA[i]);
     } // print out GPGSA
-    pc.printf("\n\r");
+    debug_gnss.printf("\n\r");
     for(int i = 0; i <= 69; i++) {
-    	pc.putc(GPGSA[i]);
+    	debug_gnss.putc(GPGSA[i]);
     } // print out GPGSA
-    pc.printf("\n\r");
+    debug_gnss.printf("\n\r");
     for(int i = 0; i <= 69; i++) {
-    	pc.putc(GPRMC[i]);
+    	debug_gnss.putc(GPRMC[i]);
     } // print out GPGSA
-    pc.printf("\n\r");
+    debug_gnss.printf("\n\r");
     for(int i = 0; i <= 69; i++) {
-    	pc.putc(GPGSV[i]);
+    	debug_gnss.putc(GPGSV[i]);
     } // print out GPGSA
-    pc.printf("\n\r");
-    pc.printf("\n\r");
-    pc.printf("Extracted data");
-    pc.printf("\n\r");
+    debug_gnss.printf("\n\r");
+    debug_gnss.printf("\n\r");
+    debug_gnss.printf("Extracted data");
+    debug_gnss.printf("\n\r");
     // Time
-    pc.printf("Time: ");
+    debug_gnss.printf("Time: ");
     for(int i = 0; i <= ((GPRMC_POS[1] - GPRMC_POS[0]) - 1); i++) {
-    	pc.printf("%c", timeg[i]);
+    	debug_gnss.printf("%c", timeg[i]);
     	if( i==2 || i==4 ) {
-    		pc.printf(":");
+    		debug_gnss.printf(":");
     	}
     }
-    pc.printf("\n\r");
+    debug_gnss.printf("\n\r");
     // Date
-    pc.printf("Date: ");
+    debug_gnss.printf("Date: ");
     for(int i = 0; i <= ((GPRMC_POS[9] - GPRMC_POS[8]) - 1); i++) {
-    	pc.printf("%c", dateg[i]);
+    	debug_gnss.printf("%c", dateg[i]);
     	if( i==2 || i==4 ) {
-    		pc.printf(".");
+    		debug_gnss.printf(".");
     	}
     }
-    pc.printf("\n\r");
+    debug_gnss.printf("\n\r");
     // Latitude
-    pc.printf("Latitude : ");
+    debug_gnss.printf("Latitude : ");
     for(int i = 0; i <= ((GPRMC_POS[3] - GPRMC_POS[2]) - 1); i++) {
-    	pc.printf("%c", Latitude[i]);
+    	debug_gnss.printf("%c", Latitude[i]);
     }
-    pc.printf(" : ");
+    debug_gnss.printf(" : ");
     for(int i = 0; i <= ((GPRMC_POS[4] - GPRMC_POS[3]) - 1); i++) {
-    	pc.printf("%c", Latitude_direction[i]);
+    	debug_gnss.printf("%c", Latitude_direction[i]);
     }
-    pc.printf("\n\r");
+    debug_gnss.printf("\n\r");
     // Longitude
-    pc.printf("Longitude : ");
+    debug_gnss.printf("Longitude : ");
     for(int i = 0; i <= ((GPRMC_POS[5] - GPRMC_POS[4]) - 1); i++) {
-    	pc.printf("%c", Longitude[i]);
+    	debug_gnss.printf("%c", Longitude[i]);
     }
-    pc.printf(" : ");
+    debug_gnss.printf(" : ");
     for(int i = 0; i <= ((GPRMC_POS[6] - GPRMC_POS[5]) - 1); i++) {
-    	pc.printf("%c", Longitude_direction[i]);
+    	debug_gnss.printf("%c", Longitude_direction[i]);
     }
-    pc.printf("\n\r");
+    debug_gnss.printf("\n\r");
     // Altitude
-    pc.printf("Altitude : ");
+    debug_gnss.printf("Altitude : ");
     for(int i = 0; i <= ((GPGGA_POS[9] - GPGGA_POS[8]) - 1); i++) {
-    	pc.printf("%c", Altitude[i]);
+    	debug_gnss.printf("%c", Altitude[i]);
     }
-    pc.printf("\n\r");
+    debug_gnss.printf("\n\r");
     // Satellites
-    pc.printf("Satellites : ");
+    debug_gnss.printf("Satellites : ");
     for(int i = 0; i <= ((GPGSV_POS[3] - GPGSV_POS[2]) - 1); i++) {
-    	pc.printf("%c", Satellites[i]);
+    	debug_gnss.printf("%c", Satellites[i]);
     }
-    pc.printf("\n\r");
-    pc.printf("end");
+    debug_gnss.printf("\n\r");
+    debug_gnss.printf("end");
  }
 
  void GNSSHandler::float_conversion()
@@ -466,7 +465,7 @@ void  GNSSHandler::receive_data()
    char dummy1[]="453.7";
    char dummy2[]="1234.07";
 
-   //pc.printf("\n\r Float Values\n\r ");
-   Latitude_f=atof(dummy1);// pc.printf("float latitude: %f", Latitude_f);
-   Longitude_f=atof(dummy2);// pc.printf("float Longitude: %f", Longitude_f);
+   //debug_gnss.printf("\n\r Float Values\n\r ");
+   Latitude_f=atof(dummy1);// debug_gnss.printf("float latitude: %f", Latitude_f);
+   Longitude_f=atof(dummy2);// debug_gnss.printf("float Longitude: %f", Longitude_f);
  }
