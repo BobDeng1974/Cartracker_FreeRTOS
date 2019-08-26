@@ -4,7 +4,8 @@
 
 #include "ArrayManagement.h"
 #include "defines.h"
-#include <math.h>
+#include <cmath>
+#include <cstring>
 
 ArrayManagement::ArrayManagement() 
 {
@@ -18,8 +19,6 @@ bool ArrayManagement::containsChar(char *cmp1, const char *cmp2, int len) // Com
   int x = 0;
   
   // start loop
-  int s = sizeof(cmp1);
-  int s2 = sizeof(cmp2);
   for(int i = 0; i <= sizeof(cmp1); i++) {
     if(cmp1[i] != cmp2[x]) {
       x = 0;
@@ -40,8 +39,6 @@ bool ArrayManagement::containsCharAdv(char *cmp1, const char *cmp2, int len1, in
   int x = 0;
   
   // start loop
-  int s = sizeof(cmp1);
-  int s2 = sizeof(cmp2);
   for(int i = 0; i <= len1; i++) {
     if(cmp1[i] != cmp2[x]) {
       x = 0;

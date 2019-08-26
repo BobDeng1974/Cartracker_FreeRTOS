@@ -37,8 +37,13 @@ void GNSSHandler::read() {
 		int size = gnss.getCount();
 		char buffer[size];
 		gnss.getBuffer(buffer, size);
-		//debug_gnss.send(buffer, size);
 		// Store buffer to to local buffer
+		if(localBufPointer > GNSS_BUFFER_SIZE) {
+			localBufPointer = 0;
+			for(int i = 0; i < GNSS_BUFFER_SIZE; i++) {
+				localBuffer[i] = 0;
+			}
+		}
 		for(int i = 0; i < size; i++) {
 			localBuffer[localBufPointer++] = buffer[i];
 		}
@@ -58,7 +63,8 @@ void GNSSHandler::parseMessage(void) {
 		if (localBuffer[i] == START_BYTE) {
 			startBytePointer = i;
 			endBytePointer = -1;	// If we find startByte again, reset end byte
-		} else if(startBytePointer == -1) {
+			//debug_gnss.send("GNSS, found start byte", 22);
+		} else if(startBytePointer == -1 && i >= localBufPointer) {
 			// Don't do unnecessary looping
 			return;
 		}
@@ -67,13 +73,15 @@ void GNSSHandler::parseMessage(void) {
 			endBytePointer = i;
 			// Calculate message size and reset localBuffer
 			msgSize = endBytePointer - startBytePointer;
+			localBufPointer = 0;
 			// Break for loop and start processing
 			// Reset local buffer, each GNSS string should be around 70bytes max
-			for(int i = 0; i < GNSS_BUFFER_SIZE; i++) {
-				localBuffer[i] = 0;
-			}
+			//debug_gnss.send("GNSS, found string\n", 19);
 			break;
 		}
+	}
+	if(msgSize < 10) {
+		return;
 	}
 	// Create temporary buffer
 	char buffer[msgSize + 1];
@@ -81,13 +89,45 @@ void GNSSHandler::parseMessage(void) {
 	for (int i = 0; i < (msgSize + 1); i++) {
 		buffer[i] = 0;
 	}
+	// Copy buffer
+	for (int i = 0; i < msgSize; i++) {
+		buffer[i] = localBuffer[startBytePointer +i];
+	}
+	debug_gnss.send(buffer, msgSize);
+	debug_gnss.send("\n", 1);
+
+	for(int i = 0; i < GNSS_BUFFER_SIZE; i++) {
+		localBuffer[i] = 0;
+	}
+
 	if( (msgSize > 0) && (startBytePointer != -1) && (endBytePointer > 0) ) {
 		ArrayManagement ar;
+		// $GPGSV,NoMsg,MsgNo,NoSv,{,sv,elv,az,cno}*cs<CR><LF>
+		if( ar.containsChar(buffer, "GPGSV", 4) ) {
+			debug_gnss.send("Found GPGSV\n", 12);
+			int outputSize = -1;
+			// Get current time in UTC
+			for (int i = 0; i < 3; i++) {
+				satellites[i] = 0;	// Clear time
+			}
+			// Buffer to search from, output buffer, sperator character, which string to output
+			// Returns size of found string
+			outputSize = ar.split(buffer, satellites, ',', 3);
+			if(outputSize > 2) {
+				// No satellites found
+				debug_gnss.send("No satellites found\n", 21);
+			} else {
+			// Debug output
+				debug_gnss.send("Satellites: ", 12);
+				debug_gnss.send(satellites, outputSize);
+				debug_gnss.send("\n",1);
+			}
+		}
 		// Detect which type of message is incoming
 		// $GPGGA,hhmmss.ss,Latitude,N,Longitude,E,FS,NoSV,HDOP,msl,m,Altref,m,DiffAge,DiffStation*cs<CR><LF>
 		// $GPGGA,092725.00,4717.11399,N,00833.91590,E,1,8,1.01,499.6,M,48.0,M,,0*5B
 		// Compare current buffer to GPGGA if GPGGA is found and all 5 characters matches in row process the message
-		if( ar.containsChar("GPGGA", buffer, 5) ) {
+		if( ar.containsChar(buffer, "GPGGA", 4) ) {
 			int outputSize = -1;
 			// Get current time in UTC
 			for (int i = 0; i < 15; i++) {
