@@ -12,46 +12,10 @@
 USART gnss(USART::eUSART3, 9600);
 USART debug_gnss(USART::eUSART1, 9600);
 // TODO minimize these to save space
-// Data Tables
-char Buffer[512];
-char GPGGA[70]; // Time, Position and Fix related data
-char GPGSA[70]; // Receifer operating mode, Satellites used, and DOP values.
-char GPRMC[70]; // Time, Date, Position, Course and Speed data
-char GPGSV[70]; // Number of satellites in view, Satellite ID numbers,
-                // Elevation, Azimuth, and SNR value
 
-// Reference data
-const unsigned char GPGGA_REF[7] = {"$GPGGA"}; // Used to determine where specific data
-const unsigned char GPGSA_REF[7] = {"$GPGSA"}; // string starts
-const unsigned char GPRMC_REF[7] = {"$GPRMC"};
-const unsigned char GPGSV_REF[7] = {"$GPGSV"};
 // GNSS Message start with ASCII $ and ends to carriage return \r
 const char START_BYTE = '$';	// Start of string
-const char END_BYTE ='\r'; /	/ End of string
-
-// Comma Search
- // GPGGA
-char GPGGA_POS[15]; // used for searchin information inside the data
- // GPGSA                  // string
-char GPGSA_POS[15];
- // GPRMC
-char GPRMC_POS[15];
- // GPGSV
-char GPGSV_POS[15];
-
- // Syntaxes
-
- // GPGGA
- unsigned int check1 = 0, i1 = 0;
-
- // Misc
- unsigned int x = 0, gps_test = 0;
- int test = 0; // test control
- char choose = 1;
- char position = 0;
- char gps_fail[5];
- char salaa;
- char check=0;
+const char END_BYTE = '\r';		// End of string
 
 GNSSHandler::GNSSHandler() {
 	// TODO Auto-generated constructor stub
@@ -118,8 +82,23 @@ void GNSSHandler::parseMessage(void) {
 		buffer[i] = 0;
 	}
 	if( (msgSize > 0) && (startBytePointer != -1) && (endBytePointer > 0) ) {
+		ArrayManagement ar;
 		// Detect which type of message is incoming
-		// GPGGA
+		// $GPGGA,hhmmss.ss,Latitude,N,Longitude,E,FS,NoSV,HDOP,msl,m,Altref,m,DiffAge,DiffStation*cs<CR><LF>
+		// $GPGGA,092725.00,4717.11399,N,00833.91590,E,1,8,1.01,499.6,M,48.0,M,,0*5B
+		// Compare current buffer to GPGGA if GPGGA is found and all 5 characters matches in row process the message
+		if(ar.containsChar("GPGGA", buffer, 5)) {
+			// Get current time in UTC
+
+			// Get Latitude
+
+			// Get Longitude
+
+			// Get Altitude
+
+			// Get connected satellites
+
+		}
 	}
 }
 

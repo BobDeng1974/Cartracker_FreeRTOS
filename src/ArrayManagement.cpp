@@ -4,35 +4,11 @@
 
 #include "ArrayManagement.h"
 #include "defines.h"
+#include <math.h>
 
 ArrayManagement::ArrayManagement() 
 {
 
-}
-
-bool ArrayManagement::containsString(String toCompare, String comparedTo) // Compares received string to reference string
-{
-  bool correct = false;
-  int x = 0;
-  // start loop
-  char cmp1[toCompare.length()];
-  char cmp2[comparedTo.length()];
-  
-  toCompare.toCharArray(cmp1, toCompare.length());
-  comparedTo.toCharArray(cmp2, comparedTo.length());  
-    
-  for(int i = 0; i <= sizeof(cmp1); i++) {
-    if(cmp1[i] != cmp2[x]) {
-      x = 0;
-    } else {
-      x++;  
-      if(x >= (sizeof(cmp2) - 1)) {
-        correct = true;
-        break;
-      }
-    }
-  }
-  return(correct);
 }
 
 bool ArrayManagement::containsChar(char *cmp1, const char *cmp2, int len) // Compares received string to reference string
@@ -124,85 +100,6 @@ void ArrayManagement::toBinary(int toConvert, char *output)
   }
 }
 
-// Converts milliseconds to Clock format(00:00:00), return a String
-// Hours, minutes, hundread of second
-String ArrayManagement::convertMsToClockFormat(long mSeconds) 
-{
-  long hundreadOfSeconds = 0;
-  long tempSeconds = 0 ;
-  long tempMinutes = 0;
-  long tempHours = 0;
-
-  int hSeconds = 0;
-  int seconds = 0;
-  int minutes = 0;
-  int hours = 0;
-  
-  hundreadOfSeconds = (mSeconds / 10);
-  hSeconds = (int)(hundreadOfSeconds%100);
-  
-  tempSeconds = (hundreadOfSeconds/100);
-  seconds = (int)(tempSeconds%60);
-
-  tempMinutes = (tempSeconds/60);
-  minutes = (int)(tempMinutes%60);
-  
-  tempHours = (tempMinutes/60);
-  hours = (tempHours%24);
-
-  // Transform into uiFormat
-  String toUi;
-  String uiHours;
-  String uiMinutes;
-  String uiSeconds;
-  String uiHSeconds;
-  
-  if(hours < 10) {
-    uiHours = "0";
-    uiHours += String(hours);
-  } else {
-    uiHours = String(hours);
-  }
-
-  if(minutes < 10) {
-    uiMinutes = "0";
-    uiMinutes += String(minutes);
-  } else {
-    uiMinutes = String(minutes);
-  }
-
-  if(seconds < 10) {
-    uiSeconds = "0";
-    uiSeconds += String(seconds);
-  } else {
-    uiSeconds = String(seconds);
-  }
-
-  if(hSeconds < 10) {
-    uiHSeconds = "0";
-    uiHSeconds += String(hSeconds);
-  } else {
-    uiHSeconds = String(hSeconds);
-  }
-  
-  toUi = ( uiMinutes + ":" + uiSeconds + ":" + uiHSeconds ); 
-  return toUi;
-}
-
-// Converst a String to numbers
-long ArrayManagement::stringToLong(String value) 
-{
-  long outLong=0;
-  long inLong=1;
-  int c = 0;
-  int idx=value.length()-1;
-  for(int i=0;i<=idx;i++){
-    c=(int)value[idx-i];
-    outLong+=inLong*(c-48);
-    inLong*=10;
-  }
-  return outLong;
-}
 
 int ArrayManagement::avarage(int *array, int count) 
 {
@@ -224,17 +121,6 @@ int ArrayManagement::percentage(int scaleMin, int scaleMax, int val)
   
    int calculatedPercentage = (int)( ( numerator/ denominator ) * (float)(100));
    return calculatedPercentage;
-}
-
-String strtohex(String data)
-{
-  String sh;
-  char ch;
-  for (int i=0;i<data.length();i++){
-    ch = data.charAt(i);
-    sh += String(ch,HEX);
-  }
-  return sh;
 }
 
 void ArrayManagement::makeString(char *input, char *output, int inputLen)

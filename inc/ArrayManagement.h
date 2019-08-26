@@ -2,12 +2,16 @@
  *  
  */
  
-#include "Arduino.h"
 
 class ArrayManagement{
   public:
     ArrayManagement();
-    bool containsString(String toCompare, String comparedTo);
+    /*!\brief Compares cmp1 to cmp2.
+     * \param cmp1 is pointer to compared char array.
+     * \param cmp2 is pointer to compared char array.
+     * \param len is integer and determines how many characters have to match to be true.
+     * \return boolean. If success return true.
+     */
     bool containsChar(char *cmp1, const char *cmp2, int len);
     bool containsCharAdv(char *cmp1, const char *cmp2, int len1, int len2);
     /*! \brief turns number in array format to integer
@@ -20,15 +24,12 @@ class ArrayManagement{
     int getArrayLength(char *input);
     void clearArray(char *input, int len);
     void copyArray(char *copyFrom, char *copyTo, int len );
-    long stringToLong(String value);
     void toBinary( int toConvert, char *output);
-    String convertMsToClockFormat(long mSeconds);
     int avarage(int *array, int count);
     /*! \brief convert value to percentage
      *  \return INTEGER, 0 - 100
      */
     int percentage(int scaleMin, int scaleMax, int val);
-    String strtohex(String data);
     bool addArrayToArray(char *input, char *output, int inputLen, int outputStart);
     void makeString(char *input, char *output, int inputLen);
 
