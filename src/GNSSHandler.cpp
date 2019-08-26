@@ -25,7 +25,9 @@ const unsigned char GPGGA_REF[7] = {"$GPGGA"}; // Used to determine where specif
 const unsigned char GPGSA_REF[7] = {"$GPGSA"}; // string starts
 const unsigned char GPRMC_REF[7] = {"$GPRMC"};
 const unsigned char GPGSV_REF[7] = {"$GPGSV"};
-const char STAR_REF ='\r'; // used for ending gps strings
+// GNSS Message start with ASCII $ and ends to carriage return \r
+const char START_BYTE = '$';	// Start of string
+const char END_BYTE ='\r'; /	/ End of string
 
 // Comma Search
  // GPGGA
@@ -81,6 +83,32 @@ void GNSSHandler::read() {
 	parseMessage();
 }
 
+void GNSSHandler::parseMessage() {
+	// Buffer is size of local buffer
+	int startBytePointer = -1;
+	int endBytePointer = -1;
+	int msgSize = -1;
+
+	for (int i = 0; i < localBufPointer; i++) {
+		// Find start byte
+		if (localBuffer[i] == START_BYTE) {
+			startBytePointer = i;
+			endBytePointer = -1;	// If we find startByte again, reset end byte
+		} else if(startBytePointer == -1) {
+			// Don't do unnecessary looping
+			return;
+		}
+		// Start byte and end byte has been found
+		if ( (startBytePointer != -1) && localBuffer[i] == END_BYTE) {
+			// Calculate message size and reset localBuffer
+
+
+		}
+
+		// Find end byte
+	}
+
+}
 
 void GNSSHandler::data_extractor() {
 	if( gps_test == 1){
@@ -137,7 +165,6 @@ void GNSSHandler::data_extractor() {
 void GNSSHandler::data_positions()
 {
     if(gps_test == 1){
-    	debug_gnss.printf("\n\rGPS test: data positions");
     	gps_fail[1] = 0;
     }
     // GPGGA
@@ -177,11 +204,6 @@ void GNSSHandler::data_positions()
 /* Function to receife the data from GPS */
 void GNSSHandler::getline()
 {
-    while(_gps.getc() != '$');    // wait for the start of a line
-          for(int i=0; i<512; i++) {
-              Buffer[i] = _gps.getc();
-              }
-              return;
 }
 
 void GNSSHandler::process()
@@ -227,7 +249,6 @@ void  GNSSHandler::receive_data()
                test = 1;
                choose = 2;
                if(test==1) {
-            	   debug_gnss.printf("\r\n");
                }
                break;
              }
