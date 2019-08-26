@@ -11,7 +11,7 @@
 #ifndef GNSSHANDLER_H_
 #define GNSSHANDLER_H_
 
-#define GNSS_BUFFER_SIZE 100
+#define GNSS_BUFFER_SIZE 250
 /* NEO6MV2
  * Default baud 9600
  *

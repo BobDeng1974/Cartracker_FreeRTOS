@@ -37,8 +37,9 @@ void GNSSHandler::read() {
 		int size = gnss.getCount();
 		char buffer[size];
 		gnss.getBuffer(buffer, size);
+		debug_gnss.send(buffer, size);
 		// Store buffer to to local buffer
-		if(localBufPointer > GNSS_BUFFER_SIZE) {
+		if(localBufPointer >= GNSS_BUFFER_SIZE) {
 			localBufPointer = 0;
 			for(int i = 0; i < GNSS_BUFFER_SIZE; i++) {
 				localBuffer[i] = 0;
@@ -63,24 +64,29 @@ void GNSSHandler::parseMessage(void) {
 		if (localBuffer[i] == START_BYTE) {
 			startBytePointer = i;
 			endBytePointer = -1;	// If we find startByte again, reset end byte
-			//debug_gnss.send("GNSS, found start byte", 22);
+			debug_gnss.send("GNSS, found start byte\n", 23);
 		} else if(startBytePointer == -1 && i >= localBufPointer) {
 			// Don't do unnecessary looping
 			return;
 		}
 		// Start byte and end byte has been found
-		if ( (startBytePointer != -1) && localBuffer[i] == END_BYTE) {
+		if ( (startBytePointer != -1) && ( (localBuffer[i] == END_BYTE) || (localBuffer[i] == '*' )) ) {
 			endBytePointer = i;
 			// Calculate message size and reset localBuffer
 			msgSize = endBytePointer - startBytePointer;
 			localBufPointer = 0;
 			// Break for loop and start processing
 			// Reset local buffer, each GNSS string should be around 70bytes max
-			//debug_gnss.send("GNSS, found string\n", 19);
+			debug_gnss.send("GNSS, found string\n", 19);
 			break;
 		}
 	}
 	if(msgSize < 10) {
+		for(int i = 0; i < endBytePointer; i++) {
+			if( (endBytePointer + i) >= GNSS_BUFFER_SIZE) return;
+			localBuffer[i] = localBuffer[endBytePointer + i];
+		}
+		localBufPointer = localBufPointer - endBytePointer;
 		return;
 	}
 	// Create temporary buffer
@@ -95,11 +101,12 @@ void GNSSHandler::parseMessage(void) {
 	}
 	debug_gnss.send(buffer, msgSize);
 	debug_gnss.send("\n", 1);
-
-	for(int i = 0; i < GNSS_BUFFER_SIZE; i++) {
-		localBuffer[i] = 0;
+	// Move bytes of local buffer to 0 // DMA circle buffer
+	for(int i = 0; i < endBytePointer; i++) {
+		if( (endBytePointer + i) >= GNSS_BUFFER_SIZE) return;
+		localBuffer[i] = localBuffer[endBytePointer + i];
 	}
-
+	localBufPointer = localBufPointer - endBytePointer;
 	if( (msgSize > 0) && (startBytePointer != -1) && (endBytePointer > 0) ) {
 		ArrayManagement ar;
 		// $GPGSV,NoMsg,MsgNo,NoSv,{,sv,elv,az,cno}*cs<CR><LF>
@@ -113,9 +120,9 @@ void GNSSHandler::parseMessage(void) {
 			// Buffer to search from, output buffer, sperator character, which string to output
 			// Returns size of found string
 			outputSize = ar.split(buffer, satellites, ',', 3);
-			if(outputSize > 2) {
+			if(outputSize > 2 || outputSize < 1) {
 				// No satellites found
-				debug_gnss.send("No satellites found\n", 21);
+				debug_gnss.send("No satellites found\n", 20);
 			} else {
 			// Debug output
 				debug_gnss.send("Satellites: ", 12);
@@ -129,6 +136,7 @@ void GNSSHandler::parseMessage(void) {
 		// Compare current buffer to GPGGA if GPGGA is found and all 5 characters matches in row process the message
 		if( ar.containsChar(buffer, "GPGGA", 4) ) {
 			int outputSize = -1;
+			debug_gnss.send("Found GPGGA\n", 12);
 			// Get current time in UTC
 			for (int i = 0; i < 15; i++) {
 				currentTime[i] = 0;	// Clear time
