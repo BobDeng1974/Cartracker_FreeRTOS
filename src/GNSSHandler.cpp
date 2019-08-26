@@ -87,9 +87,17 @@ void GNSSHandler::parseMessage(void) {
 		// $GPGGA,hhmmss.ss,Latitude,N,Longitude,E,FS,NoSV,HDOP,msl,m,Altref,m,DiffAge,DiffStation*cs<CR><LF>
 		// $GPGGA,092725.00,4717.11399,N,00833.91590,E,1,8,1.01,499.6,M,48.0,M,,0*5B
 		// Compare current buffer to GPGGA if GPGGA is found and all 5 characters matches in row process the message
-		if(ar.containsChar("GPGGA", buffer, 5)) {
+		if( ar.containsChar("GPGGA", buffer, 5) ) {
+			int outputSize = -1;
 			// Get current time in UTC
-
+			for (int i = 0; i < 15; i++) {
+				currentTime[i] = 0;	// Clear time
+			}
+			// Buffer to search from, output buffer, sperator character, which string to output
+			// Returns size of found string
+			outputSize = ar.split(buffer, currentTime, ',', 1);
+			// Debug output
+			debug_gnss.send(currentTime, outputSize);
 			// Get Latitude
 
 			// Get Longitude

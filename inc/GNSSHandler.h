@@ -26,7 +26,7 @@ public:
 	void configure();
 
 private:
-
+	char currentTime[15];
 	// Checks if full message received, if yes parse message correctly and set gnss message flag high
 	void parseMessage(void);
 	// Set static buffer, limited amount of memory. Dynamic could exceed heap.
