@@ -37,81 +37,40 @@ void GNSSHandler::read() {
 		int size = gnss.getCount();
 		char buffer[size];
 		gnss.getBuffer(buffer, size);
-		debug_gnss.send(buffer, size);
+		//debug_gnss.send(buffer, size);
 		// Store buffer to to local buffer
-		if(localBufPointer >= GNSS_BUFFER_SIZE) {
-			localBufPointer = 0;
-			for(int i = 0; i < GNSS_BUFFER_SIZE; i++) {
-				localBuffer[i] = 0;
-			}
-		}
 		for(int i = 0; i < size; i++) {
 			localBuffer[localBufPointer++] = buffer[i];
+			if(localBufPointer >= GNSS_BUFFER_SIZE) {
+				parseMessage();
+				localBufPointer = 0;
+				// No need to clear
+			}
 		}
 	}
-	// Check if full message received
-	parseMessage();
+	// When localbuffer is full parse messages
 }
 
 void GNSSHandler::parseMessage(void) {
-	// Buffer is size of local buffer
-	int startBytePointer = -1;
-	int endBytePointer = -1;
-	int msgSize = -1;
 
-	for (int i = 0; i < localBufPointer; i++) {
-		// Find start byte
-		if (localBuffer[i] == START_BYTE) {
-			startBytePointer = i;
-			endBytePointer = -1;	// If we find startByte again, reset end byte
-			debug_gnss.send("GNSS, found start byte\n", 23);
-		} else if(startBytePointer == -1 && i >= localBufPointer) {
-			// Don't do unnecessary looping
-			return;
-		}
-		// Start byte and end byte has been found
-		if ( (startBytePointer != -1) && ( (localBuffer[i] == END_BYTE) || (localBuffer[i] == '*' )) ) {
-			endBytePointer = i;
-			// Calculate message size and reset localBuffer
-			msgSize = endBytePointer - startBytePointer;
-			localBufPointer = 0;
-			// Break for loop and start processing
-			// Reset local buffer, each GNSS string should be around 70bytes max
-			debug_gnss.send("GNSS, found string\n", 19);
-			break;
-		}
-	}
-	if(msgSize < 10) {
-		for(int i = 0; i < endBytePointer; i++) {
-			if( (endBytePointer + i) >= GNSS_BUFFER_SIZE) return;
-			localBuffer[i] = localBuffer[endBytePointer + i];
-		}
-		localBufPointer = localBufPointer - endBytePointer;
-		return;
-	}
-	// Create temporary buffer
-	char buffer[msgSize + 1];
-	// Initialize buffer
-	for (int i = 0; i < (msgSize + 1); i++) {
-		buffer[i] = 0;
-	}
-	// Copy buffer
-	for (int i = 0; i < msgSize; i++) {
-		buffer[i] = localBuffer[startBytePointer +i];
-	}
-	debug_gnss.send(buffer, msgSize);
-	debug_gnss.send("\n", 1);
-	// Move bytes of local buffer to 0 // DMA circle buffer
-	for(int i = 0; i < endBytePointer; i++) {
-		if( (endBytePointer + i) >= GNSS_BUFFER_SIZE) return;
-		localBuffer[i] = localBuffer[endBytePointer + i];
-	}
-	localBufPointer = localBufPointer - endBytePointer;
-	if( (msgSize > 0) && (startBytePointer != -1) && (endBytePointer > 0) ) {
-		ArrayManagement ar;
-		// $GPGSV,NoMsg,MsgNo,NoSv,{,sv,elv,az,cno}*cs<CR><LF>
-		if( ar.containsChar(buffer, "GPGSV", 4) ) {
-			debug_gnss.send("Found GPGSV\n", 12);
+	ArrayManagement ar;
+	// $GPGSV,NoMsg,MsgNo,NoSv,{,sv,elv,az,cno}*cs<CR><LF>
+	int startByte = 0;
+	startByte = ar.containsCharAdv(localBuffer, "$GPGSV", GNSS_BUFFER_SIZE, 5);
+	if(startByte != -1 ) {
+		debug_gnss.send("Found GPGSV\n", 12);
+		//char convert[10];
+		//ar.integerToArray(startByte, convert, 10);
+		//debug_gnss.send(convert, 2);
+		// Find end byte
+		char buffer[50];
+		int size = ar.copyFromUntilFind(localBuffer, buffer, startByte, GNSS_BUFFER_SIZE, 50,  '*');
+		if(size == -1) return;
+
+		// Find count of commas. If comma count is less than 5 then it's not valid data
+		if(ar.countChars(buffer, ',', size) >= 6) {
+			debug_gnss.send(buffer, size);
+			debug_gnss.send("\n", 1);
 			int outputSize = -1;
 			// Get current time in UTC
 			for (int i = 0; i < 3; i++) {
@@ -124,37 +83,44 @@ void GNSSHandler::parseMessage(void) {
 				// No satellites found
 				debug_gnss.send("No satellites found\n", 20);
 			} else {
-			// Debug output
+				// Debug output
 				debug_gnss.send("Satellites: ", 12);
 				debug_gnss.send(satellites, outputSize);
 				debug_gnss.send("\n",1);
 			}
 		}
-		// Detect which type of message is incoming
-		// $GPGGA,hhmmss.ss,Latitude,N,Longitude,E,FS,NoSV,HDOP,msl,m,Altref,m,DiffAge,DiffStation*cs<CR><LF>
-		// $GPGGA,092725.00,4717.11399,N,00833.91590,E,1,8,1.01,499.6,M,48.0,M,,0*5B
-		// Compare current buffer to GPGGA if GPGGA is found and all 5 characters matches in row process the message
-		if( ar.containsChar(buffer, "GPGGA", 4) ) {
-			int outputSize = -1;
-			debug_gnss.send("Found GPGGA\n", 12);
-			// Get current time in UTC
-			for (int i = 0; i < 15; i++) {
-				currentTime[i] = 0;	// Clear time
-			}
-			// Buffer to search from, output buffer, sperator character, which string to output
-			// Returns size of found string
-			outputSize = ar.split(buffer, currentTime, ',', 1);
-			// Debug output
-			debug_gnss.send(currentTime, outputSize);
-			// Get Latitude
-
-			// Get Longitude
-
-			// Get Altitude
-
-			// Get connected satellites
-
-		}
 	}
+	// Detect which type of message is incoming
+	// $GPGGA,hhmmss.ss,Latitude,N,Longitude,E,FS,NoSV,HDOP,msl,m,Altref,m,DiffAge,DiffStation*cs<CR><LF>
+	// $GPGGA,092725.00,4717.11399,N,00833.91590,E,1,8,1.01,499.6,M,48.0,M,,0*5B
+	// Compare current buffer to GPGGA if GPGGA is found and all 5 characters matches in row process the message
+	startByte = ar.containsCharAdv(localBuffer, "$GPGGA",GNSS_BUFFER_SIZE, 5);
+	if(startByte) {
+		int outputSize = -1;
+		debug_gnss.send("Found GPGGA\n", 12);
+		// Get current time in UTC
+		for (int i = 0; i < 15; i++) {
+			currentTime[i] = 0;	// Clear time
+		}
+		// Buffer to search from, output buffer, sperator character, which string to output
+		// Returns size of found string
+		outputSize = ar.split(localBuffer, currentTime, ',', 1);
+		// Debug output
+		debug_gnss.send(currentTime, outputSize);
+	}
+	startByte = ar.containsCharAdv(localBuffer, "$GPRMC", GNSS_BUFFER_SIZE, 5);
+	if(startByte != -1) {
+		int outputSize = -1;
+		debug_gnss.send("Found GPRMC\n", 12);
+		// Get current time in UTC
+		for (int i = 0; i < 15; i++) {
+			currentTime[i] = 0;	// Clear time
+		}
+		// Buffer to search from, output buffer, sperator character, which string to output
+		// Returns size of found string
+		outputSize = ar.split(localBuffer, currentTime, ',', 1);
+		// Debug output
+		debug_gnss.send(currentTime, outputSize);
+		}
 }
 

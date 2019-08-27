@@ -13,7 +13,15 @@ class ArrayManagement{
      * \return boolean. If success return true.
      */
     bool containsChar(char *cmp1, const char *cmp2, int len);
-    bool containsCharAdv(char *cmp1, const char *cmp2, int len1, int len2);
+
+    /*!\brief Compares cmp1 to cmp2.
+         * \param cmp1 is pointer to compared char array.
+         * \param cmp2 is pointer to compared char array.
+         * \param len is integer and determines how many characters have to match to be true.
+         * \param startIndex returns first index of where string was found
+         * \return boolean. If success return true.
+         */
+    int containsCharAdv(char *cmp1, const char *cmp2, int len1, int len2);
     /*! \brief turns number in array format to integer
      * \param CHAR*
      * \return INTEGER
@@ -44,6 +52,8 @@ class ArrayManagement{
      * \return INTEGER, Length of output array
      */
     int split(char *toParse, char *output, char seperator, int choice);
+    int copyFromUntilFind(char *toParse, char *output, int startIndex, int sizeOfInput, int sizeOfOutput, char byteToFind);
+    int countChars(char *buffer, char toFind, int sizeOfBuffer);
     
   private:
   

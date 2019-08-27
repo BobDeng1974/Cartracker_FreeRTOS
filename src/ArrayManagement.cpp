@@ -33,24 +33,30 @@ bool ArrayManagement::containsChar(char *cmp1, const char *cmp2, int len) // Com
   return(correct);
 }
 
-bool ArrayManagement::containsCharAdv(char *cmp1, const char *cmp2, int len1, int len2) // Compares received string to reference string
+int ArrayManagement::containsCharAdv(char *cmp1, const char *cmp2, int len1, int len2) // Compares received string to reference string
 {
   bool correct = false;
+  bool startFlag = false;
+  int startIndex = -1;
   int x = 0;
-  
   // start loop
   for(int i = 0; i <= len1; i++) {
     if(cmp1[i] != cmp2[x]) {
       x = 0;
+      startFlag = false;
     } else {
-      x++;
-      if(x >= len2) {
-        correct = true;
+    	if(!startFlag) {
+    		startIndex = i;
+    		startFlag = true;
+    	}
+    	x++;
+    	if(x >= len2) {
+    		correct = true;
         break;
       }
     }
   }
-  return(correct);
+  return startIndex;
 }
 
 long ArrayManagement::toInteger(char* array) 
@@ -101,7 +107,6 @@ void ArrayManagement::toBinary(int toConvert, char *output)
 int ArrayManagement::avarage(int *array, int count) 
 {
   long value = 0;
-  
   for(int i = 0; i <= count; i++) {
     value = (value + (long)array[i]);
   }
@@ -171,6 +176,18 @@ void ArrayManagement::copyArray(char *copyFrom, char *copyTo, int len )
   }
 }
 
+int ArrayManagement::copyFromUntilFind(char *toParse, char *output, int startIndex, int sizeOfInput, int sizeOfOutput, char byteToFind) {
+	int len = 0;
+	for(int i = 0; i < sizeOfOutput; i++) {
+		if(i >= sizeOfInput) return -1;
+		output[i] = toParse[startIndex + i];
+		len++;
+		if(output[i] == byteToFind) {
+			return len;
+		}
+	}
+	return -1;
+}
 int ArrayManagement::splitCount(char *toParse, char *output, char seperator)
 {
   int i = 0;
@@ -196,7 +213,7 @@ int ArrayManagement::split(char *toParse, char *output, char seperator, int sele
   int seperatorLocations[30]; // Contains where is start and end point
   int startLoc = 0;
   int endLoc = 0;
-  // Initialize seperatoLocations Array
+  // Init seperatoLocations Array
   for (i = 0; i < 30; i++) {
     seperatorLocations[i] = 0;
   }
@@ -235,5 +252,12 @@ int ArrayManagement::split(char *toParse, char *output, char seperator, int sele
   return y;
 }
 
+int ArrayManagement::countChars(char *buffer, char toFind, int sizeOfBuffer) {
+	int count = 0;
+	for(int i = 0; i < sizeOfBuffer; i++) {
+		if(buffer[i] == toFind) count++;
+	}
+	return count;
+}
 
 
