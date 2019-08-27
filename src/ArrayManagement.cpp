@@ -14,48 +14,46 @@ ArrayManagement::ArrayManagement()
 
 bool ArrayManagement::containsChar(char *cmp1, const char *cmp2, int len) // Compares received string to reference string
 {
+	bool correct = false;
+	int x = 0;
   
-  bool correct = false;
-  int x = 0;
-  
-  // start loop
-  for(int i = 0; i <= sizeof(cmp1); i++) {
-    if(cmp1[i] != cmp2[x]) {
-      x = 0;
-    } else {
-      x++;
-      if(x >= len) {
-        correct = true;
-        break;
-      }
-    }
-  }
+	// start loop
+	for(int i = 0; i <= (int)sizeof(cmp1); i++) {
+		if(cmp1[i] != cmp2[x]) {
+			x = 0;
+		} else {
+			x++;
+			if(x >= len) {
+				correct = true;
+				break;
+			}
+		}
+	}
   return(correct);
 }
 
 int ArrayManagement::containsCharAdv(char *cmp1, const char *cmp2, int len1, int len2) // Compares received string to reference string
 {
-  bool correct = false;
-  bool startFlag = false;
-  int startIndex = -1;
-  int x = 0;
-  // start loop
-  for(int i = 0; i <= len1; i++) {
-    if(cmp1[i] != cmp2[x]) {
-      x = 0;
-      startFlag = false;
-    } else {
-    	if(!startFlag) {
-    		startIndex = i;
-    		startFlag = true;
-    	}
-    	x++;
-    	if(x >= len2) {
-    		correct = true;
-        break;
-      }
-    }
-  }
+
+	bool startFlag = false;
+	int startIndex = -1;
+	int x = 0;
+	// start loop
+	for(int i = 0; i <= len1; i++) {
+		if(cmp1[i] != cmp2[x]) {
+			x = 0;
+			startFlag = false;
+		} else {
+			if(!startFlag) {
+				startIndex = i;
+				startFlag = true;
+			}
+			x++;
+			if(x >= len2) {
+				break;
+			}
+		}
+	}
   return startIndex;
 }
 
@@ -74,7 +72,8 @@ long ArrayManagement::toInteger(char* array)
     if (array[n] == '*') {
       break;
     }
-    if (array[n] == '0' || array[n] == '1' || array[n] == '2' || array[n] == '3' || array[n] == '4' || array[n] == '5' || array[n] == '6' || array[n] == '7' || array[n] == '8' || array[n] == '9') {
+    if (array[n] == '0' || array[n] == '1' || array[n] == '2' || array[n] == '3' || array[n] == '4' ||
+    	array[n] == '5' || array[n] == '6' || array[n] == '7' || array[n] == '8' || array[n] == '9') {
       Storage[n3] = (array[n] - '0');
       n3++;
     }

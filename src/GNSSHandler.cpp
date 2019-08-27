@@ -20,6 +20,7 @@ const char END_BYTE = '\r';		// End of string
 GNSSHandler::GNSSHandler() {
 	// TODO Auto-generated constructor stub
 	localBufPointer = 0;
+	lockedSatellites = 0;
 }
 
 GNSSHandler::~GNSSHandler() {
@@ -53,15 +54,14 @@ void GNSSHandler::read() {
 
 void GNSSHandler::parseMessage(void) {
 
-	ArrayManagement ar;
-	// $GPGSV,NoMsg,MsgNo,NoSv,{,sv,elv,az,cno}*cs<CR><LF>
 	parseGPGSV();
-	// Detect which type of message is incoming
+	// If satellite count is less than 3, no point parsing rest
+	if(lockedSatellites < 3) return;
 	parseGPGGA();
 	parseGPRMC();
-
 }
 
+// $GPGSV,NoMsg,MsgNo,NoSv,{,sv,elv,az,cno}*cs<CR><LF>
 void GNSSHandler::parseGPGSV()
 {
 	ArrayManagement ar;
@@ -91,6 +91,7 @@ void GNSSHandler::parseGPGSV()
 				debug_gnss.send("Satellites: ", 12);
 				debug_gnss.send(satellites, outputSize);
 				debug_gnss.send("\n",1);
+				lockedSatellites = ar.toInteger(satellites);
 			}
 		}
 	}

@@ -28,6 +28,7 @@ public:
 private:
 	char currentTime[15];
 	char satellites[3];
+	int lockedSatellites;
 	// Checks if full message received, if yes parse message correctly and set gnss message flag high
 	void parseMessage(void);
 	// Set static buffer, limited amount of memory. Dynamic could exceed heap.
