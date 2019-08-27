@@ -11,12 +11,12 @@ class ArrayManagement{
     bool containsChar(char *cmp1, const char *cmp2, int len);
 
     /*!\brief Compares cmp1 to cmp2.
-         * \param cmp1 is pointer to compared char array.
-         * \param cmp2 is pointer to compared char array.
-         * \param len is integer and determines how many characters have to match to be true.
-         * \param startIndex returns first index of where string was found
-         * \return boolean. If success return true.
-         */
+     * \param cmp1 is pointer to compared char array.
+     * \param cmp2 is pointer to compared char array.
+     * \param len is integer and determines how many characters have to match to be true.
+     * \param startIndex returns first index of where string was found
+     * \return boolean. If success return true.
+     */
     int containsCharAdv(char *cmp1, const char *cmp2, int len1, int len2);
 
     /*! \brief turns number in array format to integer
@@ -74,15 +74,26 @@ class ArrayManagement{
     int percentage(int scaleMin, int scaleMax, int val);
 
     /*! \brief Appends array to existing array
-     * \param scaleMin determines min value
-     * \param scaleMax determines max value
-     * \param val is the value to convert into percentage
-     * \return INTEGER, 0 - 100
+     * \param input is pointer to char array to be appended
+     * \param output is pointer to char array where to append input
+     * \param inputLen is integer which determines max size for inputLen
+     * \param outputStart is integer which determines where to start appending
+     * \return BOOLEAN if all ok true
      */
     bool addArrayToArray(char *input, char *output, int inputLen, int outputStart);
+
+    /*! \brief Creates a string ending into \0 which acts as end of string
+     * \param input is pointer to char array where to create the string
+     * \param output is pointer to char array where to store the string
+     * \param inputLen is integer which determines max size for inputLen
+     */
     void makeString(char *input, char *output, int inputLen);
 
-    // Split functions
+    /*! \brief Creates a string ending into \0 which acts as end of string
+     * \param input is pointer to char array where to create the string
+     * \param output is pointer to char array where to store the string
+     * \param inputLen is integer which determines max size for inputLen
+     */
     int splitCount(char *toParse, char *output, char seperator);
     
     /*! \brief Split array by seperator. Splits array into pieces based on seperator.
@@ -93,7 +104,24 @@ class ArrayManagement{
      * \return INTEGER, Length of output array
      */
     int split(char *toParse, char *output, char seperator, int choice);
+
+    /*! \brief Copies from input array to output. Start copying from defined start index and ends when specific byte has been found
+     * \param toParse is pointer to char array where from to find and copy
+     * \param output is pointer to char array where to store copied characters
+     * \param startIndex is integer which defines where to start parsing
+     * \param sizeOfInput is integer defining max size of input array
+     * \param sizeOfOutput is integer defining max size for output array
+     * \param byteToFind is char being searched for
+     * \return INTEGER, Length of output array
+     */
     int copyFromUntilFind(char *toParse, char *output, int startIndex, int sizeOfInput, int sizeOfOutput, char byteToFind);
+
+    /*! \brief Get count of toFind chars in buffer
+     * \param buffer is pointer to char array to be searched from
+     * \param toFind is a char to find
+     * \param sizeOfBuffer is integer determining size of buffer
+     * \return count as integer
+     */
     int countChars(char *buffer, char toFind, int sizeOfBuffer);
     
   private:
