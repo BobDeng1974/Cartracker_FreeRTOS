@@ -34,6 +34,10 @@ private:
 	char localBuffer[GNSS_BUFFER_SIZE];
 	int localBufPointer;
 
+	void parseGPGGA();
+	void parseGPGSV();
+	void parseGPRMC();
+
 };
 
 #endif /* GNSSHANDLER_H_ */
