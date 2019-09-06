@@ -98,9 +98,6 @@ void GNSSHandler::parseGPGSV()
 				debug_gnss.send(satellites, outputSize);
 				debug_gnss.send("\n",1);
 				lockedSatellites = (int)ar.toInteger(satellites, outputSize); // Crashes
-				if(lockedSatellites == 0) {
-					debug_gnss.send("Over 3\n", 7);
-				}
 			}
 		}
 	}

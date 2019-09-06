@@ -83,9 +83,13 @@ long ArrayManagement::toInteger(char* array, int count)
       } else {
     	int value = (Storage[(n3 - 1) - n2]);
     	int product = 0;
-    	if(Multiplier > 0) product = pow(10, Multiplier);
-    	int newVal = value * product;	// <- We crash here
-    	//Real = Multiplier;
+    	int newVal = 0;
+    	if(Multiplier > 0) {
+    		product = pow(10, Multiplier);
+    		newVal = value * product;
+    	} else {
+    		newVal = value;
+    	}
         Real = Real + newVal;
         Multiplier++;
       }
