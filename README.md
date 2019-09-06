@@ -1,5 +1,10 @@
 # Car Tracker embedded software
 
+### Logic
+
+GPS module
+1. If locked satellites is less than 3, do not parse coordinates.
+
 ### Reference
 
 u-blox NEO-6M-0-001

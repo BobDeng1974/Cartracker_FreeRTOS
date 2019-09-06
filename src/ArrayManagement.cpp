@@ -85,7 +85,8 @@ long ArrayManagement::toInteger(char* array, int count)
     	int product = 0;
     	int newVal = 0;
     	if(Multiplier > 0) {
-    		product = pow(10, Multiplier);
+    		for(int zz = 0; zz <= Multiplier; zz++) product = product + (10 * zz);
+    		//product = pow(10, Multiplier); // Crashes with pow
     		newVal = value * product;
     	} else {
     		newVal = value;
