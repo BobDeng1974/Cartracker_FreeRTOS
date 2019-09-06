@@ -57,7 +57,6 @@ void Logic::messageReceive() {
 		// Convert to structure
 		memcpy(&receivedMessage, rxBuffer,(msgSize * sizeof(char)));
 	}
-
 }
 
 bool Logic::messageParse()

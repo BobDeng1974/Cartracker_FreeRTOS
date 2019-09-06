@@ -1,7 +1,3 @@
-/* Copyright of Massive Timing
- *  
- */
-
 #include "ArrayManagement.h"
 #include "defines.h"
 #include <cmath>
@@ -57,14 +53,13 @@ int ArrayManagement::containsCharAdv(char *cmp1, const char *cmp2, int len1, int
   return startIndex;
 }
 
-long ArrayManagement::toInteger(char* array) 
+long ArrayManagement::toInteger(char* array, int count)
 {
   int Storage[20];
   for(int i = 0; i < 20; i++) {
     Storage[i] = 0;
   }
-  long Real = 0;
-  int count = sizeof(array);
+  int Real = 0;
   
   int n3 = 0;
   
@@ -80,14 +75,18 @@ long ArrayManagement::toInteger(char* array)
   }
   
   int Multiplier = 0;
-  
+
   for (int n2 = 0; n2 <= (n3 - 1); n2++) {
    if (Storage[(n3 - 1) - n2] >= 0 && Storage[(n3 - 1) - n2] <= 9) {
       if (Storage[(n3 - 1) - n2] == 0) {
         Multiplier++;
-      }
-      else {
-        Real = Real + (Storage[(n3 - 1) - n2] * pow(10, Multiplier));
+      } else {
+    	int value = (Storage[(n3 - 1) - n2]);
+    	int product = 0;
+    	if(Multiplier > 0) product = pow(10, Multiplier);
+    	int newVal = value * product;	// <- We crash here
+    	//Real = Multiplier;
+        Real = Real + newVal;
         Multiplier++;
       }
     }
