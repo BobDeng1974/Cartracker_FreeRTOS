@@ -17,7 +17,17 @@ class ArrayManagement{
      * \param startIndex returns first index of where string was found
      * \return boolean. If success return true.
      */
-    int containsCharAdv(char *cmp1, const char *cmp2, int len1, int len2);
+    int findString(char *cmp1, const char *cmp2, int len1, int len2);
+
+    /*!\brief Compares cmp1 to cmp2.
+     * \param cmp1 is pointer to compared char array.
+     * \param cmp2 is pointer to compared char array.
+     * \param startForm is integer and determines where to start searching
+     * \param len is integer and determines how many characters have to match to be true.
+     * \param startIndex returns first index of where string was found
+     * \return boolean. If success return true.
+     */
+    int findStringFrom(char *cmp1, const char *cmp2, int startFrom, int len1, int len2);
 
     /*! \brief turns number in array format to integer
      * \param CHAR*
@@ -103,7 +113,7 @@ class ArrayManagement{
      * \param INTEGER, selection which splitted array to output
      * \return INTEGER, Length of output array
      */
-    int split(char *toParse, char *output, char seperator, int choice);
+    int getMidArray(char *toParse, int parseBufferSize, char *output, char seperator, int selection);
 
     /*! \brief Copies from input array to output. Start copying from defined start index and ends when specific byte has been found
      * \param toParse is pointer to char array where from to find and copy
@@ -124,8 +134,23 @@ class ArrayManagement{
      */
     int countChars(char *buffer, char toFind, int sizeOfBuffer);
     
-  private:
-  
+    /*! \brief Find byte
+     * \param buffer is pointer to char array to be searched from
+     * \param startFrom is integer. Determines where to start searching
+     * \param toFind is a char to find
+     * \param sizeOfBuffer is integer determining size of buffer
+     * \return index as integer
+     */
+    int findChar(char *buffer, int startFrom, char toFind, int sizeOfBuffer);
+
+    /*! \brief Split array by seperator. Splits array into pieces based on seperator.
+     * \param CHAR *, toParse -> array to split
+     * \param CHAR *, output -> output array
+     * \param CHAR, seperator seperates arrays
+     * \param INTEGER, selection which splitted array to output
+     * \return INTEGER, Length of output array
+     */
+    int splitArray(char *copyFrom, int sizeOfBufferFrom, char *copyTo, int sizeOfBufferTo, char seperator, int select);
 };
 
 

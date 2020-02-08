@@ -33,7 +33,6 @@ CommunicationHandler::~CommunicationHandler() {
 void CommunicationHandler::run() {
 	if(ble.available()) {
 		MessageProtocol::InterTaskMessage message;
-		MessageProtocol::InterTaskMessage messageConverted;
 
 		message.type = MessageProtocol::MSG_BLE;
 		message.size = ble.getCount();

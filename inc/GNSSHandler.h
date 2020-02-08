@@ -27,14 +27,15 @@ public:
 
 private:
 	char currentTime[15];
-	char satellites[3];
+	char satellites[10];
 	int lockedSatellites;
 	// Checks if full message received, if yes parse message correctly and set gnss message flag high
 	void parseMessage(void);
 	// Set static buffer, limited amount of memory. Dynamic could exceed heap.
 	char localBuffer[GNSS_BUFFER_SIZE];
 	int localBufPointer;
-
+	void findGPGSV();
+	int findSatelliteCount(char *buffer, int bufferSize);
 	void parseGPGGA();
 	void parseGPGSV();
 	void parseGPRMC();

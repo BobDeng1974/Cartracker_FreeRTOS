@@ -52,7 +52,6 @@ void init() {
 	queue = xQueueCreate(3, sizeof(int));
 }
 
-
 void static taskLogic(void *pvParameter) {
 	// Receiver task
 	// Pass Stream buffer to class
@@ -109,7 +108,6 @@ void blinkled(void *pvParameter) {
 		vTaskDelay(300);
 	}
 }
-
 
 int main(void)
 {
