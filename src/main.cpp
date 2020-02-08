@@ -37,6 +37,7 @@ SensorHandler sensorsHandler;
 AlarmHandler alarmHandler;
 CommunicationHandler communicationHandler;
 
+
 QueueHandle_t queue;
 // Need to be initialized in main, otherwise doesn't work in subclasses
 USART debug(USART::eUSART1, 9600);

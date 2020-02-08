@@ -127,8 +127,12 @@ const char* WBUS::printState(unsigned char state) {
 void WBUS::initialize()
 {
 	// Start serial with K-Line
-	wbusPort.enable();
-	wbusPort.enableIRQ();
+	wbusPort.enable();		// Enable uart
+	wbusPort.enableIRQ(); 	// Enable IRQ
+	timer = false;
+	temp = 21;
+	mode = 2;
+	status_temp = 21;
 }
 
 // WBUS Checksum
@@ -139,7 +143,8 @@ unsigned char WBUS::checksum(unsigned char *buf, unsigned char len, unsigned cha
 	return chk;
 }
 
-void WBUS::gather(int val) {
+void WBUS::gather(int val)
+{
 	switch(val) {
 	case 0x34:
 	case 0x43:
@@ -172,16 +177,16 @@ void WBUS::parse(unsigned char *buf, unsigned char len)
 	// Heater Modus
 	if (buf[2] == 0xAA) {
 		if (buf[3] == 0x21) {
-			mode = 2;
-			temp   = buf[5] - 50;
+			mode 	= 2;
+			temp   	= buf[5] - 50;
 		}
 		if (buf[3] == 0x25) {
-			mode = 3;
-			temp   = buf[5] - 50;
+			mode 	= 3;
+			temp   	= buf[5] - 50;
 		}
 		if (buf[3] == 0x26) {
-			mode = 1;
-			temp   = buf[5] - 50;
+			mode 	= 1;
+			temp   	= buf[5] - 50;
 		}
 	}
 
@@ -195,40 +200,165 @@ void WBUS::parse(unsigned char *buf, unsigned char len)
 	if (buf[2] == 0xD0) {
 		//        Serial.println("Webasto Status");
 		if (buf[3] == 0x02) {
-			status_ms = (buf[4] & 0x01) ? 1 : 0;
-			status_shr = (buf[4] & 0x10) ? 1 : 0;
+			status_ms 		= (buf[4] & 0x01) ? 1 : 0;
+			status_shr 		= (buf[4] & 0x10) ? 1 : 0;
 		}
 		if (buf[3] == 0x03) {
-			status_caf = (buf[4] & 0x01) ? 1 : 0;
-			status_gp  = (buf[4] & 0x02) ? 1 : 0;
-			status_fp  = (buf[4] & 0x04) ? 1 : 0;
-			status_cp  = (buf[4] & 0x08) ? 1 : 0;
-			status_vfr = (buf[4] & 0x10) ? 1 : 0;
-			status_nsh = (buf[4] & 0x20) ? 1 : 0;
-			status_fi  = (buf[4] & 0x40) ? 1 : 0;
+			status_caf 		= (buf[4] & 0x01) ? 1 : 0;
+			status_gp  		= (buf[4] & 0x02) ? 1 : 0;
+			status_fp  		= (buf[4] & 0x04) ? 1 : 0;
+			status_cp  		= (buf[4] & 0x08) ? 1 : 0;
+			status_vfr 		= (buf[4] & 0x10) ? 1 : 0;
+			status_nsh 		= (buf[4] & 0x20) ? 1 : 0;
+			status_fi  		= (buf[4] & 0x40) ? 1 : 0;
 		}
 		if (buf[3] == 0x05) {
-			status_temp   = buf[4] - 50;
-			status_mvolt  = (buf[5]*256+buf[6])/1000;
-			status_fd     = buf[7];
-			status_hp     = (buf[8]*256+buf[9])/10;
-			status_fdr    = (buf[10]*256+buf[11])/10000;
+			status_temp   	= buf[4] - 50;
+			status_mvolt  	= (buf[5]*256+buf[6])/1000;
+			status_fd     	= buf[7];
+			status_hp     	= (buf[8]*256+buf[9])/10;
+			status_fdr    	= (buf[10]*256+buf[11])/10000;
 		}
 		if (buf[3] == 0x06) {
-			status_wh   = buf[4]*256+buf[5];
-			status_wm   = buf[6];
-			status_oh   = buf[7]*256+buf[8];
-			status_om   = buf[9];
-			status_sc   = buf[10]*256+buf[11];
+			status_wh   	= buf[4]*256+buf[5];
+			status_wm   	= buf[6];
+			status_oh   	= buf[7]*256+buf[8];
+			status_om   	= buf[9];
+			status_sc   	= buf[10]*256+buf[11];
 		}
 		if (buf[3] == 0x07) {
-			status_os = buf[4];
-			status_os_long = printState(status_os);
+			status_os 		= buf[4];
+			status_os_long 	= printState(status_os);
 		}
 		if (buf[3] == 0x0F) {
-			status_gpp  = buf[4]*2;
-			status_fpf  = buf[5]*2;
-			status_afp  = buf[6]*2;
+			status_gpp  	= buf[4]*2;
+			status_fpf  	= buf[5]*2;
+			status_afp  	= buf[6]*2;
 		}
 	}
+}
+
+// Wbus On
+void WBUS::start(int temp) {
+    keepalive = true;
+    if (temp < 5) temp = 5;
+
+    if (temp > 35) temp = 35;
+
+    char cmd[] = {0xf4, 0x05, 0x2A, 0x21, 0xff, 0x48, 0x4d};
+    wbusPort.send(cmd, 7);
+}
+
+// Wbus Off
+void WBUS::stop() {
+    keepalive = false;
+    char cmd[] = {0xf4, 0x02, 0x10, 0xE6};
+    wbusPort.send(cmd, 4);
+}
+
+// Wbus Loop
+void WBUS::loop() {
+	char cmd[] = {0xf4, 0x04, 0x44, 0x2a, 0x00, 0x9e};
+    if (keepalive) wbusPort.send(cmd, 6);
+}
+
+void WBUS::version() {
+
+    switch(version_run) {
+        case 0:
+            wbusPort.send((char *)0xf4, 1);
+            wbusPort.send((char *)0x03, 1);
+            wbusPort.send((char *)0x51, 1);
+            wbusPort.send((char *)0x02, 1);
+            wbusPort.send((char *)0xa4, 1);
+            version_run++;
+            break;
+        case 1:
+        	wbusPort.send((char *)0xf4, 1);
+        	wbusPort.send((char *)0x03, 1);
+        	wbusPort.send((char *)0x51, 1);
+        	wbusPort.send((char *)0x0a, 1);
+        	wbusPort.send((char *)0xac, 1);
+            version_run++;
+            break;
+        case 2:
+        	wbusPort.send((char *)0xf4, 1);
+        	wbusPort.send((char *)0x03, 1);
+        	wbusPort.send((char *)0x51, 1);
+        	wbusPort.send((char *)0x0b, 1);
+        	wbusPort.send((char *)0xad, 1);
+            version_run++;
+            break;
+        case 3:
+        	wbusPort.send((char *)0xf4, 1);
+        	wbusPort.send((char *)0x03, 1);
+        	wbusPort.send((char *)0x51, 1);
+        	wbusPort.send((char *)0x0c, 1);
+        	wbusPort.send((char *)0xae, 1);
+            version_run++;
+            break;
+    }
+
+    if (version_run > 6) {
+        version_run = 0;
+    } else {
+       version_run++;
+    }
+}
+
+void WBUS::status() {
+    switch(status_run) {
+        case 0:
+        	wbusPort.send((char *)0xf4, 1);
+        	wbusPort.send((char *)0x03, 1);
+        	wbusPort.send((char *)0x50, 1);
+        	wbusPort.send((char *)0x02, 1);
+        	wbusPort.send((char *)0xa5, 1);
+            status_run++;
+            break;
+        case 1:
+        	wbusPort.send((char *)0xf4, 1);
+        	wbusPort.send((char *)0x03, 1);
+        	wbusPort.send((char *)0x50, 1);
+        	wbusPort.send((char *)0x03, 1);
+        	wbusPort.send((char *)0xa4, 1);
+            status_run++;
+            break;
+        case 2:
+        	wbusPort.send((char *)0xf4, 1);
+        	wbusPort.send((char *)0x03, 1);
+        	wbusPort.send((char *)0x50, 1);
+        	wbusPort.send((char *)0x07, 1);
+        	wbusPort.send((char *)0xa0, 1);
+            status_run++;
+            break;
+        case 3:
+        	wbusPort.send((char *)0xf4, 1);
+        	wbusPort.send((char *)0x03, 1);
+        	wbusPort.send((char *)0x50, 1);
+        	wbusPort.send((char *)0x05, 1);
+        	wbusPort.send((char *)0xa2, 1);
+            status_run++;
+            break;
+        case 4:
+        	wbusPort.send((char *)0xf4, 1);
+        	wbusPort.send((char *)0x03, 1);
+        	wbusPort.send((char *)0x50, 1);
+        	wbusPort.send((char *)0x0f, 1);
+        	wbusPort.send((char *)0xa8, 1);
+            status_run++;
+            break;
+        case 5:
+        	wbusPort.send((char *)0xf4, 1);
+        	wbusPort.send((char *)0x03, 1);
+        	wbusPort.send((char *)0x50, 1);
+        	wbusPort.send((char *)0x06, 1);
+        	wbusPort.send((char *)0xa1, 1);
+            status_run++;
+            break;
+        case 6:
+            status_run = 0;
+            version();
+            break;
+    }
 }

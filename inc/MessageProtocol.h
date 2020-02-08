@@ -14,7 +14,8 @@ public:
 	enum eMessageType {
 		MSG_BLE,
 		MSG_IMU,
-		MSG_GNSS
+		MSG_GNSS,
+		MSG_WEBASTO,
 	};
 
 	struct InterTaskMessage {

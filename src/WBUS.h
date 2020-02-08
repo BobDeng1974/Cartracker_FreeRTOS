@@ -17,7 +17,7 @@ public:
 	void initialize();
 	unsigned char checksum(unsigned char *buf, unsigned char len, unsigned char chk);
 	void combine(unsigned char val);
-	void start(int val);
+	void start(int temp);
 	void stop();
 	void loop();
 	void gather(int val);

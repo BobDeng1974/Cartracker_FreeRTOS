@@ -8,6 +8,7 @@
 #include "Logic.h"
 #include "defines.h"
 #include "USART.h"
+#include "ArrayManagement.h"
 #include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +24,7 @@ Logic::Logic() {
 	xStringLength = 0;
 	msgFlag = false;
 	msgSize = 0;
+	webasto.initialize();
 
 }
 
@@ -70,6 +72,14 @@ bool Logic::messageParse()
 	case MessageProtocol::MSG_GNSS:
 		break;
 	case MessageProtocol::MSG_IMU:
+		break;
+	case MessageProtocol::MSG_WEBASTO:
+			ArrayManagement ar;
+			if(ar.findString("on", receivedMessage.message, 30, 2)) webasto.start(wTemp);
+			if(ar.findString("off", receivedMessage.message, 30, 2)) webasto.stop(wTemp);
+			if(ar.findString("temp=", receivedMessage.message, 30, 5)) {
+				wbusTemp = 25;
+			}
 		break;
 	}
 	return false;

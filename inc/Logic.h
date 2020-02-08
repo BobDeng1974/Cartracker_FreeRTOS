@@ -8,6 +8,7 @@
 #ifndef LOGIC_H_
 #define LOGIC_H_
 #include "MessageProtocol.h"
+#include "WBUS.h"
 extern "C" {
 	#include "../FreeRTOS/inc/FreeRTOS.h"
 	#include "../FreeRTOS/inc/stream_buffer.h"
@@ -38,6 +39,9 @@ private:
 	MessageProtocol::InterTaskMessage receivedMessage;
 	void messageReceive();
 	bool messageParse();
+	WBUS webasto;
+
+	int wbusTemp = 0;
 };
 
 #endif /* LOGIC_H_ */
