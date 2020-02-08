@@ -152,18 +152,3 @@ class ArrayManagement{
      */
     int splitArray(char *copyFrom, int sizeOfBufferFrom, char *copyTo, int sizeOfBufferTo, char seperator, int select);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

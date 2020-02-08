@@ -121,7 +121,6 @@ void ArrayManagement::toBinary(int toConvert, char *output)
   for (int i = 7; i >= 0; --i) output[i] = ( (toConvert & (1 << i)) ? '1' : '0');
 }
 
-
 int ArrayManagement::avarage(int *array, int count) 
 {
   long value = 0;
@@ -230,10 +229,8 @@ int ArrayManagement::getMidArray(char *toParse, int parseBufferSize, char *outpu
 	if (selection > (seperatorCount + 1)) return 0;
 	else if ( selection < 0) return 0;
 	// start seperating
-  
 	if( selection == 0) startLoc = 0;
 	else if (selection > 0) startLoc = (seperatorLocations[selection - 1] + 1);
-
 	if ( selection >= seperatorCount && startLoc < lenParse) endLoc = (lenParse + 1);
 	else endLoc = (seperatorLocations[selection]);
 	y = 0;
@@ -282,7 +279,4 @@ int splitArray(char *copyFrom, int sizeOfBufferFrom, char *copyTo, int sizeOfBuf
 			y++;
 		}
 	}
-
-
-
 }
