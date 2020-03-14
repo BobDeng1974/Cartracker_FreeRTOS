@@ -5,7 +5,7 @@
  *      Author: samih
  */
 
-#include <CommunicationHandler.h>
+#include <Handlers/CommunicationHandler.h>
 #include "defines.h"
 #include <cstring>
 #include <stdlib.h>     /* malloc, free, rand */
@@ -33,7 +33,7 @@ CommunicationHandler::~CommunicationHandler() {
 void CommunicationHandler::run() {
 	if(ble.available()) {
 		MessageProtocol::InterTaskMessage message;
-		MessageProtocol::InterTaskMessage messageConverted;
+		//MessageProtocol::InterTaskMessage messageConverted;
 
 		message.type = MessageProtocol::MSG_BLE;
 		message.size = ble.getCount();

@@ -7,17 +7,17 @@
   * @brief   Default main function.
   ******************************************************************************
 */
-#include <CommunicationHandler.h>
+#include <Handlers/AlarmHandler.h>
+#include <Handlers/CommunicationHandler.h>
+#include <Handlers/SensorHandler.h>
+#include <Hardware/GPIO.h>
+#include <Hardware/USART.h>
+#include <Protocols/MessageProtocol.h>
 #include "stm32f10x.h"
 #include "stm32f10x_rcc.h"
-#include "GPIO.h"
 #include "Logic.h"
-#include "SensorHandler.h"
-#include "AlarmHandler.h"
-#include "USART.h"
 #include <stdlib.h>
 #include <cstring>
-#include "MessageProtocol.h"
 
 extern "C" {
 	#include "../FreeRTOS/inc/FreeRTOS.h"

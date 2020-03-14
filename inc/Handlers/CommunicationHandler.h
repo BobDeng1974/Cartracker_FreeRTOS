@@ -8,8 +8,8 @@
 #ifndef USERINTERFACE_H_
 #define USERINTERFACE_H_
 
-#include "USART.h"
-#include "MessageProtocol.h"
+#include "Hardware/USART.h"
+#include "Protocols/MessageProtocol.h"
 
 extern "C" {
 	#include "../FreeRTOS/inc/FreeRTOS.h"

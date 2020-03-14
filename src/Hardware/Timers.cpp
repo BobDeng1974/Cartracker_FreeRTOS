@@ -4,7 +4,7 @@
  *  Created on: Jul 27, 2019
  *      Author: samih
  */
-#include "Timers.h"
+#include <Hardware/Timers.h>
 
 // Required to use static variables
 unsigned int Timers::timer_sTicks = 0;

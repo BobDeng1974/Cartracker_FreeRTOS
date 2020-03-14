@@ -23,7 +23,7 @@ class ArrayManagement{
      * \param CHAR*
      * \return INTEGER
      */
-    long toInteger(char* array);
+    int toInteger(char* array, int sizeOfArray);
 
     /*! \brief turns number in array format to integer
      * \param toConvert is the integer to be converted

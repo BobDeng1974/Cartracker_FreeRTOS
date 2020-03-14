@@ -1,4 +1,4 @@
-#include "GPIO.h"
+#include <Hardware/GPIO.h>
 #include "defines.h"
 #include "stm32f10x.h"
 #include "stm32f10x_gpio.h"

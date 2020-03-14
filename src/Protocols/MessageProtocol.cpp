@@ -5,7 +5,7 @@
  *      Author: samih
  */
 
-#include "MessageProtocol.h"
+#include <Protocols/MessageProtocol.h>
 
 
 MessageProtocol::MessageProtocol() {

@@ -8,8 +8,8 @@
 #ifndef NEOWAYM590_H_
 #define NEOWAYM590_H_
 
-#include "GPIO.h"
-#include "USART.h"
+#include "Hardware/GPIO.h"
+#include "Hardware/USART.h"
 
 
 

@@ -7,7 +7,7 @@
 
 #ifndef LOGIC_H_
 #define LOGIC_H_
-#include "MessageProtocol.h"
+#include "Protocols/MessageProtocol.h"
 extern "C" {
 	#include "../FreeRTOS/inc/FreeRTOS.h"
 	#include "../FreeRTOS/inc/stream_buffer.h"

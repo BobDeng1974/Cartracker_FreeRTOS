@@ -5,7 +5,7 @@
  *      Author: samih
  */
 
-#include "AlarmHandler.h"
+#include <Handlers/AlarmHandler.h>
 
 AlarmHandler::AlarmHandler() {
 	// TODO Auto-generated constructor stub

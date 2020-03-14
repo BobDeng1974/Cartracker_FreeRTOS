@@ -5,9 +5,9 @@
  *      Author: samih
  */
 
+#include <Hardware/USART.h>
 #include "Logic.h"
 #include "defines.h"
-#include "USART.h"
 #include <cstring>
 #include <stdio.h>
 #include <stdlib.h>

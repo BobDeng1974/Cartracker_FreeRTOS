@@ -5,7 +5,7 @@
  *      Author: samih
  */
 
-#include "SensorHandler.h"
+#include <Handlers/SensorHandler.h>
 
 SensorHandler::SensorHandler() {
 	// TODO Auto-generated constructor stub

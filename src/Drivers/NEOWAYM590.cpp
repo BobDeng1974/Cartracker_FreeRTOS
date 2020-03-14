@@ -5,11 +5,11 @@
  *      Author: samih
  */
 
+#include <Hardware/delay.h>
 #include "defines.h"
-#include "NEOWAYM590.h"
-#include "delay.h"
+#include "../../inc/Drivers/NEOWAYM590.h"
 #include "Strings.h"
-#include "USART.h"
+#include "Hardware/USART.h"
 
 const char end_byte = (char)0x0D;
 USART usartGSM(USART::eUSART2, 115200);
